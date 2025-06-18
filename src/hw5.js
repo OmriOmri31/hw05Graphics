@@ -134,7 +134,7 @@ function createBasketballCourt() {
   const rims  = [27, -27];          // X positions of the two hoops
   const yTop  = 7, depth = 2; // rim height and net depth
   const rTop  = 1, rBot = 0.3;  // top & bottom radius
-  const n     = 30;                 // lines per layer
+  const n = 30;  // lines per layer
 
   rims.forEach(x => {
     for (let i = 0; i < n; i++) {
@@ -151,6 +151,20 @@ function createBasketballCourt() {
   });
 }());
 
+(function addSupports(){
+  const y = 8;
+  const mat   = new THREE.LineBasicMaterial({ color: 0xff3131});
+  const rp1 = new THREE.Vector3(28,y,0);
+  const rp2 = new THREE.Vector3(32,y-3,0);
+  const rp3 = new THREE.Vector3(32,0,0);
+  const lp1 = new THREE.Vector3(-28,y,0);
+  const lp2 = new THREE.Vector3(-32,y-3,0);
+  const lp3 = new THREE.Vector3(-32,0,0);
+  scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([rp1, rp2]), mat));
+  scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([rp2, rp3]), mat));
+  scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([lp1, lp2]), mat));
+  scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([lp2, lp3]), mat));
+}());
 
 // Create all elements
 createBasketballCourt();
