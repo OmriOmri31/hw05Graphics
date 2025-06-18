@@ -166,6 +166,35 @@ function createBasketballCourt() {
   scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([lp2, lp3]), mat));
 }());
 
+// ─── Basketball ───────────────────────────────────────────────────────────────
+(function addBall () {
+
+  const radius = 0.7;
+  const sphereGeom = new THREE.SphereGeometry(radius, 100, 100);
+  const sphereMat  = new THREE.MeshStandardMaterial({     // lit + rough
+    color: 0xff7f00,   // vivid orange
+    roughness: 0.7,
+    metalness: 0.05
+  });
+  const sphere = new THREE.Mesh(sphereGeom, sphereMat);
+
+  // Black seams
+  const seamGeom = new THREE.TorusGeometry(radius, 0.01, 8, 64);
+  const seamMat  = new THREE.MeshBasicMaterial({ color: 0x000000 });
+
+  const equator = new THREE.Mesh(seamGeom, seamMat);
+  const meridX1  = new THREE.Mesh(seamGeom, seamMat); meridX1.rotation.x = Math.PI / 4;
+  const meridX2  = new THREE.Mesh(seamGeom, seamMat); meridX2.rotation.x = Math.PI / 2;
+  const meridX3  = new THREE.Mesh(seamGeom, seamMat); meridX3.rotation.x = Math.PI / -4;
+  const meridZ  = new THREE.Mesh(seamGeom, seamMat); meridZ.rotation.z = Math.PI / 2;
+
+  const ball = new THREE.Group();
+  ball.add(sphere, equator, meridX1, meridX2, meridX3, meridZ);
+  ball.position.set(0, radius + 0.1, 0);
+  scene.add(ball);
+}());
+
+
 // Create all elements
 createBasketballCourt();
 
