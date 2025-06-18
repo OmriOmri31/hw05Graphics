@@ -210,45 +210,70 @@ camera.applyMatrix4(cameraTranslate);
 const controls = new OrbitControls(camera, renderer.domElement);
 let isOrbitEnabled = true;
 
-// Instructions display
-const instructionsElement = document.createElement('div');
-instructionsElement.style.position = 'absolute';
-instructionsElement.style.bottom = '20px';
-instructionsElement.style.left = '20px';
-instructionsElement.style.color = 'white';
-instructionsElement.style.fontSize = '16px';
-instructionsElement.style.fontFamily = 'Arial, sans-serif';
-instructionsElement.style.textAlign = 'left';
-instructionsElement.innerHTML = `
-  <h3>Controls:</h3>
-  <p>O - Toggle orbit camera</p>
-  <p>I - Zoom In</p>
-`;
-document.body.appendChild(instructionsElement);
 const scoreboard = document.createElement('div');
-scoreboard.style.position = 'absolute';
-scoreboard.style.top = '20px';
-scoreboard.style.left = '50%';
-scoreboard.style.transform = 'translateX(-50%)';
-scoreboard.style.color = 'white';
-scoreboard.style.fontFamily = 'sans-serif';
-scoreboard.style.fontSize = '20px';
-scoreboard.style.textAlign = 'center';
+scoreboard.id = 'scoreboard';
 scoreboard.innerHTML = `
   <div><strong>Home</strong>: <span id="score-left">0</span></div>
   <div><strong>Guest</strong>: <span id="score-right">0</span></div>
 `;
 document.body.appendChild(scoreboard);
 
-// Handle key events
-function handleKeyDown(e) {
-  if (e.key === "o") {
-    isOrbitEnabled = !isOrbitEnabled;
+
+const instructionsElement = document.createElement('div');
+instructionsElement.id = 'instructions';
+instructionsElement.innerHTML = `
+  <h3>Controls:</h3>
+  <p>O - Toggle orbit camera</p>
+  <p>I - Zoom In</p>
+`;
+document.body.appendChild(instructionsElement);
+
+// CSS
+const style = document.createElement('style');
+style.innerHTML = `
+  body { margin: 0; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
+
+  #scoreboard {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 18px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.4);
   }
-}
 
-document.addEventListener('keydown', handleKeyDown);
+  #scoreboard strong { color: #ffcc00; }
 
+  #instructions {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    color: white;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+    max-width: 220px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.4);
+  }
+
+  #instructions h3 {
+    margin-top: 0;
+    font-size: 16px;
+    color: #ffcc00;
+  }
+`;
+document.head.appendChild(style);
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'o') isOrbitEnabled = !isOrbitEnabled;
+});
 // Animation function
 function animate() {
   requestAnimationFrame(animate);
