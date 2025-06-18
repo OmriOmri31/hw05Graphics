@@ -40,7 +40,7 @@ function createBasketballCourt() {
   
   // Note: All court lines, hoops, and other elements have been removed
   // Students will need to implement these features
-  (function addCourtBoundary() {
+  (function addLinesOnCourt() {
     const y = 0.11;                   // floor top 0.10 -> lift by +0.01
     //court boundaries
     const points = [
@@ -49,11 +49,17 @@ function createBasketballCourt() {
       new THREE.Vector3( 30, y,  15),
       new THREE.Vector3(-30, y,  15)
     ];
+    const geometryBoundary = new THREE.BufferGeometry().setFromPoints(points);
+
+
     //court central line
     const centralLinePoints = [
       new THREE.Vector3(0, y,  15),
       new THREE.Vector3(0, y,  -15)
     ]
+    const geometryCentralLine = new THREE.BufferGeometry().setFromPoints(centralLinePoints);
+
+
     // Circle:
     const r = 6, edges = 100;
     const curve   = new THREE.EllipseCurve(0, 0, r, r, 0, Math.PI * 2);
@@ -61,8 +67,21 @@ function createBasketballCourt() {
     const circleG = new THREE.BufferGeometry().setFromPoints(pointsOfTheCircle).rotateX(-Math.PI / 2) .translate(0, y, 0);
     const circle  = new THREE.LineLoop(circleG, new THREE.LineBasicMaterial({ color: 0xffffff }));
 
-    const geometryBoundary = new THREE.BufferGeometry().setFromPoints(points);
-    const geometryCentralLine = new THREE.BufferGeometry().setFromPoints(centralLinePoints);
+    //Arcs
+    //Right arc
+    const xRadiusArc = 16, yRadiusArc = 12, edgesArc = 100;
+    const curveRightArc   = new THREE.EllipseCurve(30, 0, xRadiusArc, yRadiusArc, Math.PI/2, Math.PI * 1.5);
+    const edgesOfRightArc  = curveRightArc.getPoints(edgesArc);
+    const RArcGeom = new THREE.BufferGeometry().setFromPoints(edgesOfRightArc).rotateX(-Math.PI / 2) .translate(0, y, 0);
+    const rightArc  = new THREE.LineLoop(RArcGeom, new THREE.LineBasicMaterial({ color: 0xffffff }));
+
+    //Left arc
+    const curveLeftArc   = new THREE.EllipseCurve(-30, 0, xRadiusArc, yRadiusArc, Math.PI * 1.5, Math.PI/2);
+    const edgesOfLeftArc  = curveLeftArc.getPoints(edgesArc);
+    const LArcGeom = new THREE.BufferGeometry().setFromPoints(edgesOfLeftArc).rotateX(-Math.PI / 2).translate(0, y, 0);
+    const leftArc = new THREE.LineLoop(LArcGeom, new THREE.LineBasicMaterial({ color: 0xffffff }));
+
+
     const material = new THREE.LineBasicMaterial({ color: 0xffffff });
     const boundary  = new THREE.LineLoop(geometryBoundary, material);
     const centralLine  = new THREE.LineLoop(geometryCentralLine, material);
@@ -71,6 +90,8 @@ function createBasketballCourt() {
     scene.add(boundary);
     scene.add(centralLine);
     scene.add(circle);
+    scene.add(rightArc);
+    scene.add(leftArc);
   })();
 
 
