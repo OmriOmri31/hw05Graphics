@@ -98,19 +98,22 @@ function createBasketballCourt() {
 }
 (function addRims() {
   // Rim:
-  const r = 1, edges = 100;
-  const rRim   = new THREE.EllipseCurve(27, 0, r, r, 0, Math.PI * 2);
-  const pointsOfRRim  = rRim.getPoints(edges);
-  const lRim   = new THREE.EllipseCurve(-27, 0, r, r, 0, Math.PI * 2);
-  const pointsOfLRim  = lRim.getPoints(edges);
-  const rRimG = new THREE.BufferGeometry().setFromPoints(pointsOfRRim).rotateX(-Math.PI / 2) .translate(0, 7, 0);
-  const lRimG = new THREE.BufferGeometry().setFromPoints(pointsOfLRim).rotateX(-Math.PI / 2) .translate(0, 7, 0);
-  const rightRim   = new THREE.LineLoop(rRimG, new THREE.LineBasicMaterial({ color: 0xff3131 }));
-  const leftRim   = new THREE.LineLoop(lRimG, new THREE.LineBasicMaterial({ color: 0xff3131 }));
+  const r = 1, tube = 0.07, seg = 100;
+  const torusGeom = new THREE.TorusGeometry(r, tube, 8, seg);
+  const mat = new THREE.MeshStandardMaterial({ color: 0xff3131 });
+
+  const rightRim = new THREE.Mesh(torusGeom, mat);
+  rightRim.position.set(27, 7, 0);
+  rightRim.rotation.x = Math.PI / 2;
+
+  const leftRim = new THREE.Mesh(torusGeom, mat);
+  leftRim.position.set(-27, 7, 0);
+  leftRim.rotation.x = Math.PI / 2;
 
   scene.add(rightRim);
   scene.add(leftRim);
 })();
+
 
 (function addBoards(){
   const rBoardGeom = new THREE.BoxGeometry(0.1, 4, 6).translate(28,8,0);
