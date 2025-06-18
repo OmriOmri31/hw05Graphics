@@ -96,6 +96,22 @@ function createBasketballCourt() {
 
 
 }
+(function addRims() {
+  // Rim:
+  const r = 1, edges = 100;
+  const rRim   = new THREE.EllipseCurve(28, 0, r, r, 0, Math.PI * 2);
+  const pointsOfRRim  = rRim.getPoints(edges);
+  const lRim   = new THREE.EllipseCurve(-28, 0, r, r, 0, Math.PI * 2);
+  const pointsOfLRim  = lRim.getPoints(edges);
+  const rRimG = new THREE.BufferGeometry().setFromPoints(pointsOfRRim).rotateX(-Math.PI / 2) .translate(0, 7, 0);
+  const lRimG = new THREE.BufferGeometry().setFromPoints(pointsOfLRim).rotateX(-Math.PI / 2) .translate(0, 7, 0);
+  const rightRim   = new THREE.LineLoop(rRimG, new THREE.LineBasicMaterial({ color: 0xff3131 }));
+  const leftRim   = new THREE.LineLoop(lRimG, new THREE.LineBasicMaterial({ color: 0xff3131 }));
+
+  scene.add(rightRim);
+  scene.add(leftRim);
+})();
+
 
 // Create all elements
 createBasketballCourt();
