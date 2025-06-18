@@ -40,6 +40,33 @@ function createBasketballCourt() {
   
   // Note: All court lines, hoops, and other elements have been removed
   // Students will need to implement these features
+  (function addCourtBoundary() {
+    const y = 0.11;                   // floor top 0.10 -> lift by +0.01
+    //court boundaries
+    const points = [
+      new THREE.Vector3(-15, y, -7.5),
+      new THREE.Vector3( 15, y, -7.5),
+      new THREE.Vector3( 15, y,  7.5),
+      new THREE.Vector3(-15, y,  7.5)
+    ];
+    //court central line
+    const centralLinePoints = [
+      new THREE.Vector3(0, y,  7.5),
+      new THREE.Vector3(0, y,  -7.5)
+    ]
+
+    const geometryBoundary = new THREE.BufferGeometry().setFromPoints(points);
+    const geometryCentralLine = new THREE.BufferGeometry().setFromPoints(centralLinePoints);
+    const material = new THREE.LineBasicMaterial({ color: 0xffffff });
+    const boundary  = new THREE.LineLoop(geometryBoundary, material);
+    const centralLine  = new THREE.LineLoop(geometryCentralLine, material);
+
+    boundary.renderOrder = 1;         // draw after the wooden court (extra safety)
+    scene.add(boundary);
+    scene.add(centralLine);
+  })();
+
+
 }
 
 // Create all elements
