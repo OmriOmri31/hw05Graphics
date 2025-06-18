@@ -222,8 +222,23 @@ instructionsElement.style.textAlign = 'left';
 instructionsElement.innerHTML = `
   <h3>Controls:</h3>
   <p>O - Toggle orbit camera</p>
+  <p>I - Zoom In</p>
 `;
 document.body.appendChild(instructionsElement);
+const scoreboard = document.createElement('div');
+scoreboard.style.position = 'absolute';
+scoreboard.style.top = '20px';
+scoreboard.style.left = '50%';
+scoreboard.style.transform = 'translateX(-50%)';
+scoreboard.style.color = 'white';
+scoreboard.style.fontFamily = 'sans-serif';
+scoreboard.style.fontSize = '20px';
+scoreboard.style.textAlign = 'center';
+scoreboard.innerHTML = `
+  <div><strong>Home</strong>: <span id="score-left">0</span></div>
+  <div><strong>Guest</strong>: <span id="score-right">0</span></div>
+`;
+document.body.appendChild(scoreboard);
 
 // Handle key events
 function handleKeyDown(e) {
