@@ -29,7 +29,7 @@ function degrees_to_radians(degrees) {
 // Create basketball court
 function createBasketballCourt() {
   // Court floor - just a simple brown surface
-  const courtGeometry = new THREE.BoxGeometry(30, 0.2, 15);
+  const courtGeometry = new THREE.BoxGeometry(60, 0.2, 30);
   const courtMaterial = new THREE.MeshPhongMaterial({ 
     color: 0xc68642,  // Brown wood color
     shininess: 50
@@ -44,16 +44,22 @@ function createBasketballCourt() {
     const y = 0.11;                   // floor top 0.10 -> lift by +0.01
     //court boundaries
     const points = [
-      new THREE.Vector3(-15, y, -7.5),
-      new THREE.Vector3( 15, y, -7.5),
-      new THREE.Vector3( 15, y,  7.5),
-      new THREE.Vector3(-15, y,  7.5)
+      new THREE.Vector3(-30, y, -15),
+      new THREE.Vector3( 30, y, -15),
+      new THREE.Vector3( 30, y,  15),
+      new THREE.Vector3(-30, y,  15)
     ];
     //court central line
     const centralLinePoints = [
-      new THREE.Vector3(0, y,  7.5),
-      new THREE.Vector3(0, y,  -7.5)
+      new THREE.Vector3(0, y,  15),
+      new THREE.Vector3(0, y,  -15)
     ]
+    // Circle:
+    const r = 6, edges = 100;
+    const curve   = new THREE.EllipseCurve(0, 0, r, r, 0, Math.PI * 2);
+    const pointsOfTheCircle  = curve.getPoints(edges);
+    const circleG = new THREE.BufferGeometry().setFromPoints(pointsOfTheCircle).rotateX(-Math.PI / 2) .translate(0, y, 0);
+    const circle  = new THREE.LineLoop(circleG, new THREE.LineBasicMaterial({ color: 0xffffff }));
 
     const geometryBoundary = new THREE.BufferGeometry().setFromPoints(points);
     const geometryCentralLine = new THREE.BufferGeometry().setFromPoints(centralLinePoints);
@@ -64,6 +70,7 @@ function createBasketballCourt() {
     boundary.renderOrder = 1;         // draw after the wooden court (extra safety)
     scene.add(boundary);
     scene.add(centralLine);
+    scene.add(circle);
   })();
 
 
