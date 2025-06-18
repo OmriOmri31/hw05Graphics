@@ -99,9 +99,9 @@ function createBasketballCourt() {
 (function addRims() {
   // Rim:
   const r = 1, edges = 100;
-  const rRim   = new THREE.EllipseCurve(28, 0, r, r, 0, Math.PI * 2);
+  const rRim   = new THREE.EllipseCurve(27, 0, r, r, 0, Math.PI * 2);
   const pointsOfRRim  = rRim.getPoints(edges);
-  const lRim   = new THREE.EllipseCurve(-28, 0, r, r, 0, Math.PI * 2);
+  const lRim   = new THREE.EllipseCurve(-27, 0, r, r, 0, Math.PI * 2);
   const pointsOfLRim  = lRim.getPoints(edges);
   const rRimG = new THREE.BufferGeometry().setFromPoints(pointsOfRRim).rotateX(-Math.PI / 2) .translate(0, 7, 0);
   const lRimG = new THREE.BufferGeometry().setFromPoints(pointsOfLRim).rotateX(-Math.PI / 2) .translate(0, 7, 0);
@@ -110,6 +110,23 @@ function createBasketballCourt() {
 
   scene.add(rightRim);
   scene.add(leftRim);
+})();
+
+(function addBoards(){
+  const rBoardGeom = new THREE.BoxGeometry(0.1, 4, 6).translate(28,8,0);
+  const lBoardGeom = new THREE.BoxGeometry(0.1, 4, 6).translate(-28,8,0);
+  const boardMaterial = new THREE.MeshPhongMaterial({
+    color: 0xffffff,  //
+    shininess: 5,
+    transparent: true,
+    opacity: 0.7
+  });
+  const rBoard = new THREE.Mesh(rBoardGeom, boardMaterial);
+  const lBoard = new THREE.Mesh(lBoardGeom, boardMaterial);
+  rBoard.receiveShadow = true;
+  lBoard.receiveShadow = true;
+  scene.add(rBoard);
+  scene.add(lBoard)
 })();
 
 
