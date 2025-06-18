@@ -129,6 +129,28 @@ function createBasketballCourt() {
   scene.add(lBoard)
 })();
 
+(function addNets(){
+  const mat   = new THREE.LineBasicMaterial({ color: 0xffffff, transparent:true, opacity:0.5 });
+  const rims  = [27, -27];          // X positions of the two hoops
+  const yTop  = 7, depth = 2; // rim height and net depth
+  const rTop  = 1, rBot = 0.3;  // top & bottom radius
+  const n     = 30;                 // lines per layer
+
+  rims.forEach(x => {
+    for (let i = 0; i < n; i++) {
+      const a =  i * 2 * Math.PI / n; //spaces between lines
+      [
+        [a, rTop, yTop, rBot, yTop - depth],
+      ].forEach(v => {
+        const [ang, rt, yt, rb, yb] = v;
+        const p1 = new THREE.Vector3(x + Math.cos(ang) * rt, yt, Math.sin(ang) * rt);
+        const p2 = new THREE.Vector3(x + Math.cos(ang) * rb, yb, Math.sin(ang) * rb);
+        scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([p1, p2]), mat));
+      });
+    }
+  });
+}());
+
 
 // Create all elements
 createBasketballCourt();
