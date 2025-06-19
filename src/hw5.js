@@ -28,16 +28,23 @@ function degrees_to_radians(degrees) {
 
 // Create basketball court
 function createBasketballCourt() {
-  // Court floor - just a simple brown surface
   const courtGeometry = new THREE.BoxGeometry(60, 0.2, 30);
-  const courtMaterial = new THREE.MeshPhongMaterial({ 
-    color: 0xc68642,  // Brown wood color
-    shininess: 50
+  const textureLoader = new THREE.TextureLoader();
+  const woodTexture = textureLoader.load('./src/components/MapleTexture.webp');
+
+  woodTexture.wrapS = THREE.RepeatWrapping;
+  woodTexture.wrapT = THREE.RepeatWrapping;
+  woodTexture.repeat.set(6, 3); // adjust for plank scale
+
+  const courtMaterial = new THREE.MeshStandardMaterial({
+    map: woodTexture,
+    roughness: 0.4,
+    metalness: 0.05
   });
   const court = new THREE.Mesh(courtGeometry, courtMaterial);
   court.receiveShadow = true;
   scene.add(court);
-  
+
   // Note: All court lines, hoops, and other elements have been removed
   // Students will need to implement these features
   (function addLinesOnCourt() {
