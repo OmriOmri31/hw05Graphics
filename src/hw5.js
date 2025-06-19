@@ -444,8 +444,35 @@ function createBasketballCourt() {
 
 }());
 
+
+function addStands(baseX, baseY, baseZ, numberOfLevels){
+  if (numberOfLevels === 0)
+    return;
+  const x = baseX;
+  const y = baseY;
+  const z = baseZ;
+
+  const topGeom = new THREE.BoxGeometry(60, 0.1, 2).translate(x,y+1,z+2);
+  const frontStandGeom = new THREE.BoxGeometry(60, 1.9, 0.1).translate(x, y, z+1);
+  const standMaterial = new THREE.MeshPhongMaterial({
+    color: 0x66645e,
+    shininess: 0.4
+  });
+  const topPart = new THREE.Mesh(topGeom, standMaterial);
+  const frontPart  = new THREE.Mesh(frontStandGeom, standMaterial);
+  topPart.receiveShadow = true;
+  frontPart.receiveShadow = true;
+
+  scene.add(topPart);
+  scene.add(frontPart)
+  addStands(x, y+1.9, z+2, numberOfLevels-1 )
+
+
+}
+
 // Create all elements
 createBasketballCourt();
+addStands(0, 1, 18, 5 )
 
 
 let activeCamera = camera1; // Start with camera1
@@ -469,7 +496,7 @@ instructionsElement.innerHTML = `
    <h3>Controls:</h3>
   <p>O – Toggle orbit rotation</p>
   <p>W / S – Move forward / back</p>
-  <p>A / D – Strafe left / right</p>
+  <p>A / D – Move left / right</p>
   <p>C – Switch camera</p>
   <p>R – Reset view</p>
 `;
