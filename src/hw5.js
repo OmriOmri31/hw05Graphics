@@ -392,6 +392,30 @@ function createBasketballCourt() {
 
 }());
 
+(function addOfficialsTable(){
+  const topGeom = new THREE.BoxGeometry(10, 0.2, 4).translate(0,3,-19.5);
+  const lGeom = new THREE.BoxGeometry(0.2, 3, 4).translate(-5,1.5,-19.5);
+  const rGeom = new THREE.BoxGeometry(0.2, 3, 4).translate(5,1.5,-19.5);
+  const frontGeom = new THREE.BoxGeometry(10, 3, 0.1).translate(0,1.5,-17.5);
+  const tableMaterial = new THREE.MeshPhongMaterial({
+    color: 0x00080,  //
+    metalness: 5,
+    opacity: 0.7
+  });
+  const topSide = new THREE.Mesh(topGeom, tableMaterial);
+  const frontSide  = new THREE.Mesh(frontGeom, tableMaterial);
+  const rSide = new THREE.Mesh(lGeom, tableMaterial);
+  const lSide = new THREE.Mesh(rGeom, tableMaterial);
+  topSide.receiveShadow = true;
+  frontSide.receiveShadow = true;
+  rSide.receiveShadow = true;
+  lSide.receiveShadow = true;
+  scene.add(topSide);
+  scene.add(frontSide)
+  scene.add(rSide);
+  scene.add(lSide)
+})();
+
 
 // Create all elements
 createBasketballCourt();
