@@ -13,9 +13,18 @@ scene.background = new THREE.Color(0x000000);
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-directionalLight.position.set(10, 20, 15);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.4);
+directionalLight.position.set(10, 15, 0);
 scene.add(directionalLight);
+
+
+const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
+directionalLight2.position.set(-10, 15, 0);
+scene.add(directionalLight2);
+
+const directionalLightCorner = new THREE.DirectionalLight(0xffff00, 0.2);
+directionalLightCorner.position.set(-30, 15, -15);
+scene.add(directionalLightCorner);
 
 // Enable shadows
 renderer.shadowMap.enabled = true;
