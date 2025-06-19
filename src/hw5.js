@@ -1,7 +1,16 @@
 import {OrbitControls} from './OrbitControls.js'
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+const camera1 = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const camera2 = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+camera1.position.set(0, 15, 30);
+camera1.lookAt(0, 0, 0);
+
+camera2.position.set(0, 30, 0);
+camera2.lookAt(0, 0, 0);
+
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -387,13 +396,11 @@ function createBasketballCourt() {
 // Create all elements
 createBasketballCourt();
 
-// Set camera position for better view
-const cameraTranslate = new THREE.Matrix4();
-cameraTranslate.makeTranslation(0, 15, 30);
-camera.applyMatrix4(cameraTranslate);
+
+let activeCamera = camera1; // Start with camera1
 
 // Orbit controls
-const controls = new OrbitControls(camera, renderer.domElement);
+const controls = new OrbitControls(activeCamera, renderer.domElement);
 let isOrbitEnabled = true;
 
 const scoreboard = document.createElement('div');
@@ -410,7 +417,7 @@ instructionsElement.id = 'instructions';
 instructionsElement.innerHTML = `
   <h3>Controls:</h3>
   <p>O - Toggle orbit camera</p>
-  <p>I - Zoom In</p>
+  <p>C - Change Camera</p>
 `;
 document.body.appendChild(instructionsElement);
 
@@ -459,7 +466,12 @@ document.head.appendChild(style);
 
 document.addEventListener('keydown', e => {
   if (e.key === 'o') isOrbitEnabled = !isOrbitEnabled;
+  if (e.key.toLowerCase() === 'c') {
+    activeCamera = activeCamera === camera1 ? camera2 : camera1;
+    controls.object = activeCamera; // update controls to use new camera
+  }
 });
+
 // Animation function
 function animate() {
   requestAnimationFrame(animate);
@@ -468,7 +480,7 @@ function animate() {
   controls.enabled = isOrbitEnabled;
   controls.update();
   
-  renderer.render(scene, camera);
+  renderer.render(scene, activeCamera);
 }
 
 animate();
