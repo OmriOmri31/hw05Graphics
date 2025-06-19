@@ -415,9 +415,12 @@ document.body.appendChild(scoreboard);
 const instructionsElement = document.createElement('div');
 instructionsElement.id = 'instructions';
 instructionsElement.innerHTML = `
-  <h3>Controls:</h3>
-  <p>O - Toggle orbit camera</p>
-  <p>C - Change Camera</p>
+   <h3>Controls:</h3>
+  <p>O – Toggle orbit rotation</p>
+  <p>W / S – Move forward / back</p>
+  <p>A / D – Strafe left / right</p>
+  <p>C – Switch camera</p>
+  <p>R – Reset view</p>
 `;
 document.body.appendChild(instructionsElement);
 
@@ -464,11 +467,55 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
+
 document.addEventListener('keydown', e => {
-  if (e.key === 'o') isOrbitEnabled = !isOrbitEnabled;
-  if (e.key.toLowerCase() === 'c') {
-    activeCamera = activeCamera === camera1 ? camera2 : camera1;
-    controls.object = activeCamera; // update controls to use new camera
+  const k = e.key.toLowerCase();
+  const speed = 2;
+
+  // movement helpers
+  const fwd  = new THREE.Vector3();      // forward
+  const side = new THREE.Vector3();      // right
+  const moveAlong = (vec, dist) => {
+    activeCamera.position.addScaledVector(vec, dist);
+    controls.target.addScaledVector(vec, dist);   // keep POV
+  };
+
+  // O – toggle OrbitControls rotation
+  if (k === 'o') {
+    isOrbitEnabled = !isOrbitEnabled;
+  }
+
+  // W / S – forward / backward
+  if (k === 'w' || k === 's') {
+    activeCamera.getWorldDirection(fwd);
+    moveAlong(fwd, k === 'w' ?  speed : -speed);
+  }
+
+  // A / D – left / right
+  if (k === 'a' || k === 'd') {
+    activeCamera.getWorldDirection(fwd);
+    side.crossVectors(fwd, activeCamera.up).normalize();
+    moveAlong(side, k === 'd' ? speed : -speed);
+  }
+
+  /* C – switch between camera1 and camera2 */
+  if (k === 'c') {
+    activeCamera = (activeCamera === camera1) ? camera2 : camera1;
+    controls.object = activeCamera;
+  }
+
+  /* R – reset both cameras and controls */
+  if (k === 'r') {
+    camera1.position.set(0, 15, 30);
+    camera1.lookAt(0, 0, 0);
+
+    camera2.position.set(0, 30, 0);
+    camera2.lookAt(0, 0, 0);
+
+    activeCamera = camera1;                  // default view
+    controls.object = activeCamera;
+    controls.target.set(0, 0, 0);
+    controls.update();
   }
 });
 
