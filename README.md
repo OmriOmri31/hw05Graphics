@@ -44,10 +44,11 @@ All other geometry, materials and code were created from scratch by the author.
 
 ## Mandatory Screenshots
 
-| Description                      | Preview                           |
-| -------------------------------- | --------------------------------- |
-| Overall view of the court        |                                   |
-| Close‑up of hoop & net           |                                   |
-| Basketball at centre court       |                                   |
-| Demonstration of camera controls | [▶ Watch clip](docs/Movement.mp4) |
+| Description                      | Preview                                   |
+|----------------------------------|-------------------------------------------|
+| Overall view of the court        | ![](docs/overall.png)                     |
+| Close-up of hoop & net           | ![](docs/hoop_closeup.png)                |
+| Basketball at centre court       | ![](docs/ball_centre.png)                 |
+| Demonstration of camera controls | [▶ Watch clip](docs/Movement.mp4)         |
+
 
