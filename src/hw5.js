@@ -216,7 +216,6 @@ function createBasketballCourt() {
   const circle  = new THREE.LineLoop(circleG, new THREE.LineBasicMaterial({ color: 0xffffff }));
 
 
-
   //Right box
   const rightPoints = [
     new THREE.Vector3(30, y, -3),
@@ -232,7 +231,6 @@ function createBasketballCourt() {
   const circleGR = new THREE.BufferGeometry().setFromPoints(pointsOfTheCircleR).rotateX(-Math.PI / 2) .translate(21, y, 0);
   const circleR  = new THREE.LineLoop(circleGR, new THREE.LineBasicMaterial({ color: 0xffffff }));
 
-
   //Arcs
   //Right arc
   const xRadiusArc = 3, yRadiusArc = 2, edgesArc = 100;
@@ -247,18 +245,126 @@ function createBasketballCourt() {
   const LArcGeom = new THREE.BufferGeometry().setFromPoints(edgesOfLeftArc).rotateX(-Math.PI / 2).translate(0, y, 0);
   const leftArc =new THREE.Line(LArcGeom, new THREE.LineBasicMaterial({ color: 0xffffff }));
 
-
   const material = new THREE.LineBasicMaterial({ color: 0xffffff });
   const boundary  = new THREE.LineLoop(geometryBoundary, material);
   const boundaryR  = new THREE.LineLoop(geometryBoundaryR, material);
 
-  boundary.renderOrder = 1;         // draw after the wooden court (extra safety)
+  //Box lines
+  //Left box
+  const firstLineLB = [ //LB = Left Bottom
+    new THREE.Vector3(-28, y, 3),
+    new THREE.Vector3( -28 , y, 4),
+  ];
+
+  const geometryFirstLineLB = new THREE.BufferGeometry().setFromPoints(firstLineLB);
+  const leftFirstLineB  = new THREE.LineLoop(geometryFirstLineLB, material);
+  scene.add(leftFirstLineB)
+
+  const secondLineLB = [
+    new THREE.Vector3(-26, y, 3),
+    new THREE.Vector3( -26 , y, 4),
+  ];
+  const geometrySecondLineLB = new THREE.BufferGeometry().setFromPoints(secondLineLB);
+  const leftSecondLineB  = new THREE.LineLoop(geometrySecondLineLB, material);
+  scene.add(leftSecondLineB)
+
+  const thirdLineLB = [
+    new THREE.Vector3(-23, y, 3),
+    new THREE.Vector3( -23 , y, 4),
+  ];
+  const geometryThirdLineLB = new THREE.BufferGeometry().setFromPoints(thirdLineLB);
+  const leftThirdLineB  = new THREE.LineLoop(geometryThirdLineLB, material);
+  scene.add(leftThirdLineB)
+
+  const firstLineLT = [     //LT = Left Top
+    new THREE.Vector3(-28, y, -3),
+    new THREE.Vector3( -28 , y, -4),
+  ];
+
+  const geometryFirstLineLT = new THREE.BufferGeometry().setFromPoints(firstLineLT);
+  const leftFirstLineT  = new THREE.LineLoop(geometryFirstLineLT, material);
+  scene.add(leftFirstLineT)
+
+  const secondLineLT = [
+    new THREE.Vector3(-26, y, -3),
+    new THREE.Vector3( -26 , y, -4),
+  ];
+  const geometrySecondLineLT = new THREE.BufferGeometry().setFromPoints(secondLineLT);
+  const leftSecondLineT  = new THREE.LineLoop(geometrySecondLineLT, material);
+  scene.add(leftSecondLineT)
+
+  const thirdLineLT = [
+    new THREE.Vector3(-23, y, -3),
+    new THREE.Vector3( -23 , y, -4),
+  ];
+  const geometryThirdLineLT = new THREE.BufferGeometry().setFromPoints(thirdLineLT);
+  const leftThirdLineT  = new THREE.LineLoop(geometryThirdLineLT, material);
+  scene.add(leftThirdLineT)
+
+
+  //Right box
+  const firstLineRB = [ //RB = Right Bottom
+    new THREE.Vector3(28, y, 3),
+    new THREE.Vector3(28 , y, 4),
+  ];
+
+  const geometryFirstLineRB = new THREE.BufferGeometry().setFromPoints(firstLineRB);
+  const rightFirstLineB  = new THREE.LineLoop(geometryFirstLineRB, material);
+  scene.add(rightFirstLineB)
+
+  const secondLineRB = [
+    new THREE.Vector3(26, y, 3),
+    new THREE.Vector3(26 , y, 4),
+  ];
+  const geometrySecondLineRB = new THREE.BufferGeometry().setFromPoints(secondLineRB);
+  const rightSecondLineB  = new THREE.LineLoop(geometrySecondLineRB, material);
+  scene.add(rightSecondLineB)
+
+  const thirdLineRB = [
+    new THREE.Vector3(23, y, 3),
+    new THREE.Vector3(23 , y, 4),
+  ];
+  const geometryThirdLineRB = new THREE.BufferGeometry().setFromPoints(thirdLineRB);
+  const rightThirdLineB  = new THREE.LineLoop(geometryThirdLineRB, material);
+  scene.add(rightThirdLineB)
+
+  const firstLineRT = [     //RT = Right Top
+    new THREE.Vector3(28, y, -3),
+    new THREE.Vector3(28 , y, -4),
+  ];
+
+  const geometryFirstLineRT = new THREE.BufferGeometry().setFromPoints(firstLineRT);
+  const rightFirstLineT  = new THREE.LineLoop(geometryFirstLineRT, material);
+  scene.add(rightFirstLineT)
+
+  const secondLineRT = [
+    new THREE.Vector3(26, y, -3),
+    new THREE.Vector3(26 , y, -4),
+  ];
+  const geometrySecondLineRT = new THREE.BufferGeometry().setFromPoints(secondLineRT);
+  const rightSecondLineT  = new THREE.LineLoop(geometrySecondLineRT, material);
+  scene.add(rightSecondLineT)
+
+  const thirdLineRT = [
+    new THREE.Vector3(23, y, -3),
+    new THREE.Vector3(23 , y, -4),
+  ];
+  const geometryThirdLineRT = new THREE.BufferGeometry().setFromPoints(thirdLineRT);
+  const rightThirdLineT  = new THREE.LineLoop(geometryThirdLineRT, material);
+  scene.add(rightThirdLineT)
+
+
+
+
+
+  boundary.renderOrder = 1;
   scene.add(boundary);
   scene.add(circle);
   scene.add(boundaryR);
   scene.add(circleR);
   scene.add(rightArc);
   scene.add(leftArc);
+
 }());
 
 
