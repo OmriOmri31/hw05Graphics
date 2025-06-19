@@ -169,9 +169,7 @@ function createBasketballCourt() {
   scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([lp2, lp3]), mat));
 }());
 
-// ─── Basketball ───────────────────────────────────────────────────────────────
 (function addBall () {
-
   const radius = 0.7;
   const sphereGeom = new THREE.SphereGeometry(radius, 100, 100);
   const sphereMat  = new THREE.MeshStandardMaterial({     // lit + rough
@@ -195,6 +193,74 @@ function createBasketballCourt() {
   ball.add(sphere, equator, meridX1, meridX2, meridX3, meridZ);
   ball.position.set(0, radius + 0.1, 0);
   scene.add(ball);
+}());
+
+// BONUS!!
+(function addBonusLines(){
+  //Boxes
+  const y = 0.11;
+  //Left box
+  const leftPoints = [
+    new THREE.Vector3(-30, y, -3),
+    new THREE.Vector3( -21 , y, -3),
+    new THREE.Vector3( -21, y,  3),
+    new THREE.Vector3(-30, y,  3)
+  ];
+  const geometryBoundary = new THREE.BufferGeometry().setFromPoints(leftPoints);
+
+  // Left circle:
+  const r = 3, edges = 100;
+  const curve   = new THREE.EllipseCurve(0, 0, r, r, 0, Math.PI * 2);
+  const pointsOfTheCircle  = curve.getPoints(edges);
+  const circleG = new THREE.BufferGeometry().setFromPoints(pointsOfTheCircle).rotateX(-Math.PI / 2) .translate(-21, y, 0);
+  const circle  = new THREE.LineLoop(circleG, new THREE.LineBasicMaterial({ color: 0xffffff }));
+
+
+
+  //Right box
+  const rightPoints = [
+    new THREE.Vector3(30, y, -3),
+    new THREE.Vector3( 21 , y, -3),
+    new THREE.Vector3( 21, y,  3),
+    new THREE.Vector3(30, y,  3)
+  ];
+  const geometryBoundaryR = new THREE.BufferGeometry().setFromPoints(rightPoints);
+
+  // Left circle:
+  const curveR   = new THREE.EllipseCurve(0, 0, r, r, 0, Math.PI * 2);
+  const pointsOfTheCircleR  = curveR.getPoints(edges);
+  const circleGR = new THREE.BufferGeometry().setFromPoints(pointsOfTheCircleR).rotateX(-Math.PI / 2) .translate(21, y, 0);
+  const circleR  = new THREE.LineLoop(circleGR, new THREE.LineBasicMaterial({ color: 0xffffff }));
+
+
+
+
+  /*//Arcs
+  //Right arc
+  const xRadiusArc = 4, yRadiusArc = 3, edgesArc = 100;
+  const curveRightArc   = new THREE.EllipseCurve(30, 0, xRadiusArc, yRadiusArc, Math.PI/2, Math.PI * 1.5);
+  const edgesOfRightArc  = curveRightArc.getPoints(edgesArc);
+  const RArcGeom = new THREE.BufferGeometry().setFromPoints(edgesOfRightArc).rotateX(-Math.PI / 2) .translate(0, y, 0);
+  const rightArc  = new THREE.LineLoop(RArcGeom, new THREE.LineBasicMaterial({ color: 0xffffff }));
+
+  //Left arc
+  const curveLeftArc   = new THREE.EllipseCurve(-30, 0, xRadiusArc, yRadiusArc, Math.PI * 1.5, Math.PI/2);
+  const edgesOfLeftArc  = curveLeftArc.getPoints(edgesArc);
+  const LArcGeom = new THREE.BufferGeometry().setFromPoints(edgesOfLeftArc).rotateX(-Math.PI / 2).translate(0, y, 0);
+  const leftArc = new THREE.LineLoop(LArcGeom, new THREE.LineBasicMaterial({ color: 0xffffff }));
+*/
+
+  const material = new THREE.LineBasicMaterial({ color: 0xffffff });
+  const boundary  = new THREE.LineLoop(geometryBoundary, material);
+  const boundaryR  = new THREE.LineLoop(geometryBoundaryR, material);
+
+  boundary.renderOrder = 1;         // draw after the wooden court (extra safety)
+  scene.add(boundary);
+  scene.add(circle);
+  scene.add(boundaryR);
+  scene.add(circleR);
+  //scene.add(rightArc);
+  //scene.add(leftArc);
 }());
 
 
