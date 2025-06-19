@@ -233,22 +233,20 @@ function createBasketballCourt() {
   const circleR  = new THREE.LineLoop(circleGR, new THREE.LineBasicMaterial({ color: 0xffffff }));
 
 
-
-
-  /*//Arcs
+  //Arcs
   //Right arc
-  const xRadiusArc = 4, yRadiusArc = 3, edgesArc = 100;
-  const curveRightArc   = new THREE.EllipseCurve(30, 0, xRadiusArc, yRadiusArc, Math.PI/2, Math.PI * 1.5);
+  const xRadiusArc = 3, yRadiusArc = 2, edgesArc = 100;
+  const curveRightArc   = new THREE.EllipseCurve(29, 0, xRadiusArc, yRadiusArc, Math.PI/2, Math.PI * 1.5);
   const edgesOfRightArc  = curveRightArc.getPoints(edgesArc);
   const RArcGeom = new THREE.BufferGeometry().setFromPoints(edgesOfRightArc).rotateX(-Math.PI / 2) .translate(0, y, 0);
-  const rightArc  = new THREE.LineLoop(RArcGeom, new THREE.LineBasicMaterial({ color: 0xffffff }));
+  const rightArc  = new THREE.Line(RArcGeom, new THREE.LineBasicMaterial({ color: 0xffffff }));
 
   //Left arc
-  const curveLeftArc   = new THREE.EllipseCurve(-30, 0, xRadiusArc, yRadiusArc, Math.PI * 1.5, Math.PI/2);
+  const curveLeftArc   = new THREE.EllipseCurve(-29, 0, xRadiusArc, yRadiusArc, Math.PI * 1.5, Math.PI/2);
   const edgesOfLeftArc  = curveLeftArc.getPoints(edgesArc);
   const LArcGeom = new THREE.BufferGeometry().setFromPoints(edgesOfLeftArc).rotateX(-Math.PI / 2).translate(0, y, 0);
-  const leftArc = new THREE.LineLoop(LArcGeom, new THREE.LineBasicMaterial({ color: 0xffffff }));
-*/
+  const leftArc =new THREE.Line(LArcGeom, new THREE.LineBasicMaterial({ color: 0xffffff }));
+
 
   const material = new THREE.LineBasicMaterial({ color: 0xffffff });
   const boundary  = new THREE.LineLoop(geometryBoundary, material);
@@ -259,8 +257,8 @@ function createBasketballCourt() {
   scene.add(circle);
   scene.add(boundaryR);
   scene.add(circleR);
-  //scene.add(rightArc);
-  //scene.add(leftArc);
+  scene.add(rightArc);
+  scene.add(leftArc);
 }());
 
 
