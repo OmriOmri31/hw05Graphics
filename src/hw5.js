@@ -111,7 +111,7 @@ function createBasketballCourt() {
     const boundary  = new THREE.LineLoop(geometryBoundary, material);
     const centralLine  = new THREE.LineLoop(geometryCentralLine, material);
 
-    boundary.renderOrder = 1;         // draw after the wooden court (extra safety)
+    boundary.renderOrder = 1;
     scene.add(boundary);
     scene.add(centralLine);
     scene.add(circle);
@@ -416,6 +416,33 @@ function createBasketballCourt() {
   scene.add(lSide)
 })();
 
+(function addSquaresOnBoard(){
+  const x = 27.9;          // match the board’s X (−28 for left, +28 for right)
+  const y = 8;           // board centre-height
+  const z = 0;           // board is at z = 0
+
+  const ptsL = [
+    new THREE.Vector3(-x, y + 0.5, z - 1),
+    new THREE.Vector3(-x, y + 0.5, z + 1),
+    new THREE.Vector3(-x, y - 1, z + 1),
+    new THREE.Vector3(-x, y - 1, z - 1)
+  ];
+
+  const ptsR = [
+    new THREE.Vector3(x, y + 0.5, z - 1),
+    new THREE.Vector3(x, y + 0.5, z + 1),
+    new THREE.Vector3(x, y - 1, z + 1),
+    new THREE.Vector3(x, y - 1, z - 1)
+  ];
+
+  const geom = new THREE.BufferGeometry().setFromPoints(ptsL);
+  const geomR = new THREE.BufferGeometry().setFromPoints(ptsR);
+  const square = new THREE.LineLoop(geom, new THREE.LineBasicMaterial({ color: 0x000000 }));
+  const squareR = new THREE.LineLoop(geomR, new THREE.LineBasicMaterial({ color: 0x000000 }));
+  scene.add(square);
+  scene.add(squareR);
+
+}());
 
 // Create all elements
 createBasketballCourt();
