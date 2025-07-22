@@ -472,7 +472,18 @@
   const COURT_X = 29;
   const COURT_Z = 14;
   //const BALL_SMOOTHNESS = 0.9
-  
+  let power = 0;
+
+  //Physics essentials:
+  const frames = 1/60;    // 60fps
+  const G  = -9.8 * frames;
+  const bounciness = 0.85;           // bounciness
+  const friction  = 0.97;          // floor friction per frame
+
+  let vel = new THREE.Vector3();  // shot velocity
+  let flying = false;
+  const RIM_X = 27, RIM_Y = 7;
+
   // Create all elements
   createBasketballCourt();
   addStands(0, 1, 18, 5 )
@@ -502,7 +513,20 @@
     <p>G / H – Move left / right</p>
     <p>C – Switch camera</p>
     <p>N – Reset view</p>
+    <p>W/S – Power Level</p>
   `;
+
+  /* power indicator ui */
+  const pBox = document.createElement('div');
+  pBox.id = 'power-indicator';
+  pBox.innerHTML = '<div class="p‑title">Power Indicator</div><div id="p‑bars"></div><span id="p‑num">0</span>';
+  document.body.appendChild(pBox);
+  for (let i = 0; i < 100; i++) {           // 100 tiny bars
+    const b = document.createElement('div');
+    b.className = 'p‑bar';
+    pBox.querySelector('#p‑bars').appendChild(b);
+  }
+
   document.body.appendChild(instructionsElement);
   
   // CSS
@@ -545,6 +569,18 @@
       font-size: 16px;
       color: #ffcc00;
     }
+    
+    #power-indicator{
+    position:absolute;bottom:100px;right:100px;
+    border:1px solid #fff;padding:6px 4px;display:none;font-size:12px;
+    }
+    #power-indicator .p‑title{
+    color:#fff;text-align:center;margin-bottom:4px
+    }
+    #p‑bars{display:flex;flex-direction:column-reverse;gap:1px}
+    .p‑bar{width:85px;height:2px;background:transparent}
+    #p‑num{position:absolute;right:-26px;top:50%;transform:translateY(-50%);
+    color:#fff;font-size:12px}
   `;
   document.head.appendChild(style);
   
@@ -609,6 +645,31 @@
       ball.position.x += (THREE.MathUtils.clamp(ball.position.x + dx, -COURT_X, COURT_X) - ball.position.x);
       ball.position.z += (THREE.MathUtils.clamp(ball.position.z + dz, -COURT_Z, COURT_Z) - ball.position.z);
     }
+
+    /* W / S – power up / down */
+    if (k === 'w' || k === 's') {
+      power = THREE.MathUtils.clamp(power + (k === 'w' ? 1 : -1), 0, 100);
+      const box = document.getElementById('power-indicator');
+      const bars = box.querySelectorAll('.p‑bar');
+      if (power === 0) { box.style.display = 'none'; return; }
+      box.style.display = 'block';
+      bars.forEach((b,i)=>{ b.style.background = i < power ? `hsl(0,${i}%,50%)`:'transparent'; });
+      box.querySelector('#p‑num').textContent = power;   // keep ui number in sync
+
+    }
+
+    /* SPACE – shoot */
+    if (k === ' ') {
+      if (flying || power === 0) return;
+      const rimX  = ball.position.x < 0 ? -RIM_X : RIM_X;           // nearest hoop
+      const aim   = new THREE.Vector3(rimX, RIM_Y, 0).sub(ball.position);
+      const flat  = aim.clone().setY(0);           // horizontal vec
+      const angle = Math.atan2(aim.y, flat.length());               // requested calc
+      vel = flat.normalize().multiplyScalar(0.30 * power * frames);     // horiz speed
+      vel.y = Math.sin(angle) * 3.0 * power * frames;                   // vertical
+      flying = true;                                              // start flight
+      power = 0;  pBox.style.display = 'none';                    // reset ui
+    }
     
   });
   
@@ -619,6 +680,31 @@
     // Update controls
     controls.enabled = isOrbitEnabled;
     controls.update();
+
+    //Ball is in the air
+    vel.y += G;                       // gravity
+    ball.position.add(vel);           // integrate
+
+      /* bounces */
+    if (ball.position.y <= 0.8){
+            ball.position.y = 0.8;
+      vel.y *= -bounciness;                //losses vertical speed
+      if (Math.abs(vel.y) < 0.25) vel.y = 0;   // stop mini hops
+      vel.x *= friction;                 // gradual horizontal slowdown
+      vel.z *= friction;
+        }
+      if (Math.abs(ball.position.x) >= COURT_X){
+          ball.position.x = THREE.MathUtils.clamp(ball.position.x,-COURT_X,COURT_X);
+          vel.x *= -0.6;
+      }
+      if (Math.abs(ball.position.z) >= COURT_Z){
+          ball.position.z = THREE.MathUtils.clamp(ball.position.z,-COURT_Z,COURT_Z);
+          vel.z *= -0.6;
+      }
+      /* stop when almost still */
+    if (vel.lengthSq() < 1e-4 && ball.position.y<=0.81){
+            vel.set(0,0,0); flying = false;     // ready for next shot
+        }
     
     renderer.render(scene, activeCamera);
   }
