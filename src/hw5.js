@@ -488,6 +488,22 @@
   const RIM_R  = 1;
   const RIMS = [ {x: 27, y:7, z:0}, {x:-27, y:7, z:0} ];
 
+  //global vars and conts for statistics:
+  let scoreL = 0, scoreR = 0, shots = 0, made = 0;
+  let scoredThisFlight = false;              // prevents double‑count
+  const stats = document.createElement('div');
+  stats.id = 'stats'; stats.style.cssText =
+        'position:absolute;top:60px;left:20%;transform:translateX(-50%);color:#fff';
+  stats.textContent = 'Shots:0  Scores:0';
+  document.body.appendChild(stats);
+  function updStats() { stats.textContent = `Shots:${shots}  Scores:${made}`; }
+  function flash() { scoreboard.style.background='#0a0';
+      setTimeout(()=>scoreboard.style.background='rgba(0,0,0,0.6)',300); }
+  function addScore(leftSide){
+      if(leftSide) document.getElementById('score-left').textContent = ++scoreL;
+      else          document.getElementById('score-right').textContent = ++scoreR;
+      made++; updStats(); flash();
+    }
 
   // Create all elements
   createBasketballCourt();
@@ -666,6 +682,8 @@
     /* SPACE – shoot */
     if (k === ' ') {
       if (flying || power === 0) return;
+      shots++; updStats();               // count every attempt
+      scoredThisFlight = false;
       const rimX  = ball.position.x < 0 ? -RIM_X : RIM_X;           // nearest hoop
       const aim   = new THREE.Vector3(rimX, RIM_Y, 0).sub(ball.position);
       const flat  = aim.clone().setY(0);           // horizontal vec
@@ -736,6 +754,17 @@
         }
       }
     }
+    /* bucket detection: ball passed down through ring */
+      if (!scoredThisFlight && vel.y < 0 &&
+            Math.abs(ball.position.y - RIM_Y) < 0.2) {
+          for (const r of RIMS) {
+            const d = Math.hypot(ball.position.x - r.x, ball.position.z - r.z);
+            if (d < 0.3) {                     // roughly centre of hoop
+              addScore(r.x < 0);               // left hoop = home
+              scoredThisFlight = true;
+            }
+          }
+        }
 
       /* stop when almost still */
     if (vel.lengthSq() < 1e-4 && ball.position.y<=0.81){
