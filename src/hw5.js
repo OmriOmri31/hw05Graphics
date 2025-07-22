@@ -484,6 +484,11 @@
   let flying = false;
   const RIM_X = 27, RIM_Y = 7;
 
+  const BALL_R = 0.7;
+  const RIM_R  = 1;
+  const RIMS = [ {x: 27, y:7, z:0}, {x:-27, y:7, z:0} ];
+
+
   // Create all elements
   createBasketballCourt();
   addStands(0, 1, 18, 5 )
@@ -686,13 +691,14 @@
     ball.position.add(vel);           // integrate
 
       /* bounces */
-    if (ball.position.y <= 0.8){
-            ball.position.y = 0.8;
-      vel.y *= -bounciness;                //losses vertical speed
-      if (Math.abs(vel.y) < 0.25) vel.y = 0;   // stop mini hops
-      vel.x *= friction;                 // gradual horizontal slowdown
-      vel.z *= friction;
-        }
+    const floorY = BALL_R + 0.1;
+    if (ball.position.y < floorY) {
+        ball.position.y = floorY;
+        vel.y *= -bounciness;
+        vel.x *= friction;
+        vel.z *= friction;
+        if (Math.abs(vel.y) < 0.25) vel.y = 0;   // stop mini hops
+      }
       if (Math.abs(ball.position.x) >= COURT_X){
           ball.position.x = THREE.MathUtils.clamp(ball.position.x,-COURT_X,COURT_X);
           vel.x *= -0.6;
@@ -701,6 +707,26 @@
           ball.position.z = THREE.MathUtils.clamp(ball.position.z,-COURT_Z,COURT_Z);
           vel.z *= -0.6;
       }
+
+    /* rims */
+    for (const r of RIMS) {
+      const dy = ball.position.y - r.y;
+      if (Math.abs(dy) > BALL_R) continue;              // out of rim plane
+      const dx = ball.position.x - r.x, dz = ball.position.z - r.z;
+      const dist = Math.hypot(dx, dz);
+      const pen = RIM_R + BALL_R - dist;
+      if (pen > 0) {                                    // overlap → push out
+        const nx = dx / dist, nz = dz / dist;
+        ball.position.x += nx * pen;
+        ball.position.z += nz * pen;
+        const vDot = vel.x * nx + vel.z * nz;           // reflect horiz vel
+        if (vDot < 0) {
+          vel.x -= (1 + bounciness) * vDot * nx;
+          vel.z -= (1 + bounciness) * vDot * nz;
+        }
+      }
+    }
+
       /* stop when almost still */
     if (vel.lengthSq() < 1e-4 && ball.position.y<=0.81){
             vel.set(0,0,0); flying = false;     // ready for next shot
