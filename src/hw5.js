@@ -687,8 +687,18 @@
     controls.update();
 
     //Ball is in the air
-    vel.y += G;                       // gravity
-    ball.position.add(vel);           // integrate
+    vel.y += G;// gravity
+    ball.position.add(vel);
+
+      // spin
+      const speed = vel.length();
+      if (speed > 1e-4) {
+          const axis = new THREE.Vector3(vel.z, 0, -vel.x);
+          if (axis.lengthSq() > 1e-6) {
+            axis.normalize();
+            ball.rotateOnWorldAxis(axis, speed / BALL_R);
+          }
+        }
 
       /* bounces */
     const floorY = BALL_R + 0.1;
