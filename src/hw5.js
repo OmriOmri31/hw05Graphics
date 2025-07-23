@@ -581,6 +581,7 @@
     <p>C – Switch camera</p>
     <p>N – Reset view</p>
     <p>W/S – Power Level</p>
+    <p>R - Set the ball in the center</p>
   `;
 
   /* power indicator ui */
