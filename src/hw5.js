@@ -539,7 +539,7 @@
       feedback.textContent = msg;
       feedback.style.opacity = 1;
       clearTimeout(setFeedback._t);
-      setFeedback._t = setTimeout(() => feedback.style.opacity = 0, 1500);
+      setFeedback._t = setTimeout(() => feedback.style.opacity = 0, 2500);
     }
 
   function updStats() { stats.textContent = `Shots:${shots}  Scores:${made}`; }
@@ -725,6 +725,16 @@
       box.querySelector('#p‑num').textContent = power;   // keep ui number in sync
 
     }
+
+  // R – reset ball position and stop motion
+   if (k === 'r') {
+     ball.position.set(0, BALL_R + 0.1, 0);
+     vel.set(0, 0, 0);
+     flying = false;
+     power = 0;
+     pBox.style.display = 'none';
+     updRange();
+   }
 
     /* SPACE – shoot */
     if (k === ' ') {
