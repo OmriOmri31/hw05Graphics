@@ -1,4 +1,5 @@
   import {OrbitControls} from './OrbitControls.js'
+
   
   const scene = new THREE.Scene();
   
@@ -475,8 +476,8 @@
   let power = 0;
 
   //Physics essentials:
-  const frames = 1/60;    // 60fps
-  const G  = -9.8 * frames;
+  const dt = 1/60;    // 60fps: delta time (each frame)
+  const G  = -9.8;
   const bounciness = 0.85;           // bounciness
   const friction  = 0.97;          // floor friction per frame
 
@@ -491,11 +492,56 @@
   //global vars and conts for statistics:
   let scoreL = 0, scoreR = 0, shots = 0, made = 0;
   let scoredThisFlight = false;              // prevents double‑count
+
+  function idealPower(dist){ return THREE.MathUtils.clamp(Math.round(10 + 2*dist),10,100); }
+
+  /* pick a fixed high arc (70°) and compute the INITIAL speed that lands the ball in the centre of the rim.                                       */
+  const THETA = THREE.MathUtils.degToRad(70);            // launch angle
+  function idealSpeed(dist){
+    const g   = 9.8;                                     // real gravity
+    const h0  = BALL_R + 0.1;                            // release height
+    const dy  = RIM_Y - h0;                              // vertical gap
+    const cos = Math.cos(THETA);
+    const term = dist * Math.tan(THETA) - dy;            // denominator helper
+    if (term <= 0) return 0;                             // too close – guard
+    return Math.sqrt((g * dist * dist) / (2 * cos * cos * term));
+  }
+
+  const rangeTag = document.createElement('div');
+  rangeTag.id   = 'range';
+  rangeTag.style.cssText =
+          'position:absolute;bottom:200px;right:200px;color:#fff;font-size:14px';
+  document.body.appendChild(rangeTag);
+
+      function updRange(){
+          const rimX  = ball.position.x < 0 ? -RIM_X : RIM_X;          // nearest hoop
+          const dist  = Math.hypot(ball.position.x - rimX, ball.position.z);
+          const ideal = idealPower(dist);                              // centre bar
+          const min   = Math.max(10,  ideal - 4);                      // 10‑bar window
+          const max   = Math.min(100, ideal + 5);
+          rangeTag.textContent = `${min} - ${max}`;
+        }
+
+  //stats ui
   const stats = document.createElement('div');
   stats.id = 'stats'; stats.style.cssText =
         'position:absolute;top:60px;left:20%;transform:translateX(-50%);color:#fff';
   stats.textContent = 'Shots:0  Scores:0';
   document.body.appendChild(stats);
+
+  // shot feedback
+  const feedback = document.createElement('div');
+  feedback.id = 'feedback';
+  feedback.style.cssText =
+    'position:absolute;top:100px;left:20%;transform:translateX(-50%);color:#fff;font-size:16px;transition:opacity 0.4s ease';
+  document.body.appendChild(feedback);
+  function setFeedback(msg) {
+      feedback.textContent = msg;
+      feedback.style.opacity = 1;
+      clearTimeout(setFeedback._t);
+      setFeedback._t = setTimeout(() => feedback.style.opacity = 0, 1500);
+    }
+
   function updStats() { stats.textContent = `Shots:${shots}  Scores:${made}`; }
   function flash() { scoreboard.style.background='#0a0';
       setTimeout(()=>scoreboard.style.background='rgba(0,0,0,0.6)',300); }
@@ -665,6 +711,7 @@
       // keep the ball in court
       ball.position.x += (THREE.MathUtils.clamp(ball.position.x + dx, -COURT_X, COURT_X) - ball.position.x);
       ball.position.z += (THREE.MathUtils.clamp(ball.position.z + dz, -COURT_Z, COURT_Z) - ball.position.z);
+      updRange();
     }
 
     /* W / S – power up / down */
@@ -682,42 +729,49 @@
     /* SPACE – shoot */
     if (k === ' ') {
       if (flying || power === 0) return;
-      shots++; updStats();               // count every attempt
-      scoredThisFlight = false;
-      const rimX  = ball.position.x < 0 ? -RIM_X : RIM_X;           // nearest hoop
-      const aim   = new THREE.Vector3(rimX, RIM_Y, 0).sub(ball.position);
-      const flat  = aim.clone().setY(0);           // horizontal vec
-      const angle = Math.atan2(aim.y, flat.length());               // requested calc
-      vel = flat.normalize().multiplyScalar(0.30 * power * frames);     // horiz speed
-      vel.y = Math.sin(angle) * 3.0 * power * frames;                   // vertical
+      shots++; updStats();  scoredThisFlight = false;
+
+
+      const rimX = ball.position.x < 0 ? -RIM_X : RIM_X;
+              const aim  = new THREE.Vector3(rimX, RIM_Y, 0).sub(ball.position);
+              const flat = aim.clone().setY(0);
+              const dist  = flat.length();
+              const ideal = idealPower(dist);                  // centre of sweet spot
+              const diff  = power - ideal;
+
+              if (Math.abs(diff) <= 4) setFeedback('It was perfect! Just like you! 🤍');
+              else if (diff < 0)       setFeedback("Too weak, haven't you had breakfast today?");
+              else                    setFeedback("Too strong! chill...");
+
+      if (Math.abs(power - ideal) <= 4) power = ideal; // auto‑perfect
+
+            const vIdeal = idealSpeed(dist);                 // m/s that SWISHes
+            const vMag   = vIdeal * (power / ideal);         // linear miss‑curve
+
+      const horiz  = flat.normalize().multiplyScalar(vMag * Math.cos(THETA));
+      vel.copy(horiz);
+      vel.y = vMag * Math.sin(THETA);
       flying = true;                                              // start flight
       power = 0;  pBox.style.display = 'none';                    // reset ui
     }
     
   });
-  
-  // Animation function
-  function animate() {
-    requestAnimationFrame(animate);
-    
-    // Update controls
-    controls.enabled = isOrbitEnabled;
-    controls.update();
 
-    //Ball is in the air
-    vel.y += G;// gravity
-    ball.position.add(vel);
-
-      // spin
-      const speed = vel.length();
-      if (speed > 1e-4) {
-          const axis = new THREE.Vector3(vel.z, 0, -vel.x);
-          if (axis.lengthSq() > 1e-6) {
-            axis.normalize();
-            ball.rotateOnWorldAxis(axis, speed / BALL_R);
-          }
-        }
-
+   const SIM_SPEED = 3;
+   function physicsStep () {
+     /* gravity & translation */
+     vel.y += G * dt;
+     ball.position.addScaledVector(vel, dt);
+     const speed = vel.length();
+     if (speed > 0.00001) {
+       const axis = new THREE.Vector3(vel.z, 0, -vel.x);
+       if (axis.lengthSq() > 0.00001) {
+         axis.normalize();
+         const SPIN_FACTOR = 0.2;
+         ball.rotateOnWorldAxis(axis,
+             (speed / BALL_R) * dt * SPIN_FACTOR);
+       }
+     }
       /* bounces */
     const floorY = BALL_R + 0.1;
     if (ball.position.y < floorY) {
@@ -742,8 +796,10 @@
       if (Math.abs(dy) > BALL_R) continue;              // out of rim plane
       const dx = ball.position.x - r.x, dz = ball.position.z - r.z;
       const dist = Math.hypot(dx, dz);
-      const pen = RIM_R + BALL_R - dist;
-      if (pen > 0) {                                    // overlap → push out
+      /* allow “dead‑centre” shots (<75 cm from rim axis) to pass straight through without ever colliding with the rim mesh   */
+      if (dist < 0.75) continue;
+      const pen  = RIM_R + BALL_R - dist;
+      if (pen > 0) {  // overlap → push out
         const nx = dx / dist, nz = dz / dist;
         ball.position.x += nx * pen;
         ball.position.z += nz * pen;
@@ -767,11 +823,23 @@
         }
 
       /* stop when almost still */
-    if (vel.lengthSq() < 1e-4 && ball.position.y<=0.81){
+    if (vel.lengthSq() < 0.0001 && ball.position.y<=0.81){
             vel.set(0,0,0); flying = false;     // ready for next shot
         }
-    
+
     renderer.render(scene, activeCamera);
   }
-  
+
+  function animate () {
+     requestAnimationFrame(animate);
+     controls.enabled = isOrbitEnabled;
+     controls.update();
+     updRange();
+
+     for (let i = 0; i < SIM_SPEED; i++)
+       physicsStep();
+
+     renderer.render(scene, activeCamera);
+  }
+
   animate();
