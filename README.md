@@ -1,4 +1,4 @@
-# Computer Graphics – Exercise 5 – WebGL Basketball Court
+# Computer Graphics – Exercise 5 & 6 – WebGL Basketball Court
 
 ## Getting Started
 
@@ -28,7 +28,13 @@
 | Stands             | Five‑tier spectator stands behind the sideline.                                                                                                                         |
 | Interactive camera | `O` – enable/disable orbit rotation`W/S` – move forward / back (POV)`A/D` – strafe left / right`C` – main camera ↔ bird’s‑eye camera`R` – reset both cameras & controls |
 | UI                 | Top‑centre scoreboard (Home / Guest) and bottom‑left controls overlay.                                                                                                  |
-| Officials' Table   | With Table Official as a profession, I couldn't not placing a table in there :)                                                                                         |
+| Officials' Table   | With Table Official as a profession, I couldn't not placing a table in there :)      
+#EX6 features
+| Ball Controls      | Arrow keys move the ball, W/S adjust shot power, Space to shoot, R resets ball to center. |
+| Physics & Shooting | Realistic gravity, friction, bounces, parabolic trajectory, and spin; shot angle calculated to nearest rim. |
+| Scoring & Feedback | Shots and scores tracker, dynamic scoreboard (Home/Guest), white visual feedback for shot strength. |
+| Power UI           | Right side vertical power meter with numeric value and ideal power range display. |
+| Suggested Range    | The range that the ball most likley will go in if shot with power within the range. |
 
 ---
 
@@ -50,5 +56,6 @@ All other geometry, materials and code were created from scratch by the author.
 | Close-up of hoop & net           | ![](docs/hoop_closeup.png)                |
 | Basketball at centre court       | ![](docs/ball_centre.png)                 |
 | Demonstration of camera controls | [▶ Watch clip](docs/Movement.mp4)         |
+| Demonstration of ex06 features   | [▶ Watch clip](docs/Shooting.mp4)         |
 
 
