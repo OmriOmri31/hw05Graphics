@@ -57,5 +57,8 @@ All other geometry, materials and code were created from scratch by the author.
 | Basketball at centre court       | ![](docs/ball_centre.png)                 |
 | Demonstration of camera controls | [▶ Watch clip](docs/Movement.mp4)         |
 | Demonstration of ex06 features   | [▶ Watch clip](docs/Shooting.mp4)         |
+Clarification - The music in the demonstration video (of ex06) is not part of the game, it
+was playing on my computer while recording... 😅 I left it in because I think it 
+actually really adds to the video.
 
 
